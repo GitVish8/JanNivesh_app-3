@@ -1,40 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Jan Nivesh Email Login</title>
+  <title>Jan Nivesh - Secure Login</title>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0A6E31, #0A1F44);
+      color: white;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    .card {
+      background: white;
+      color: black;
+      padding: 30px;
+      border-radius: 12px;
+      width: 320px;
+      margin: auto;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      cursor: pointer;
+      background: #0A6E31;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
+
+    #dashboard {
+      display: none;
+    }
+
+    #message {
+      margin-top: 10px;
+      font-size: 14px;
+      color: green;
+    }
+  </style>
 </head>
 
 <body>
 
-<h2>Jan Nivesh Email Login</h2>
+  <div class="card" id="authSection">
+    <h2>Jan Nivesh Email Login</h2>
 
-<input type="email" id="email" placeholder="Enter Email">
-<br><br>
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
 
-<input type="password" id="password" placeholder="Enter Password">
-<br><br>
+    <button onclick="register()">Register</button>
+    <button onclick="login()">Login</button>
 
-<button onclick="register()">Register</button>
-<button onclick="login()">Login</button>
+    <p id="message"></p>
+  </div>
 
-<script>
+  <div class="card" id="dashboard">
+    <h2>Welcome to Jan Nivesh Dashboard</h2>
+    <p>You are successfully logged in.</p>
+    <button onclick="logout()">Logout</button>
+  </div>
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDP6deMg1DmjeUpejx7a_6kBEN6m_Q8iA8",
-  authDomain: "jannivesh-a55cb.firebaseapp.com",
-  projectId: "jannivesh-a55cb",
-  storageBucket: "jannivesh-a55cb.firebasestorage.app",
-  messagingSenderId: "853197155676",
-  appId: "1:853197155676:web:b77625a46627b0cf66e599",
-  measurementId: "G-J2FXXR33X5"
-};
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDP6deMg1DmjeUpejx7a_6kBEN6m_Q8iA8",
+      authDomain: "jannivesh-a55cb.firebaseapp.com",
+      projectId: "jannivesh-a55cb",
+      storageBucket: "jannivesh-a55cb.firebasestorage.app",
+      messagingSenderId: "853197155676",
+      appId: "1:853197155676:web:b77625a46627b0cf66e599",
+      measurementId: "G-J2FXXR33X5"
+    };
 
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+    const messageBox = document.getElementById("message");
+    const authSection = document.getElementById("authSection");
+    const dashboard = document.getElementById("dashboard");
+
+    // Register
+    function register() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          userCredential.user.sendEmailVerification();
+          messageBox.innerText =
+            "Verification email sent! If not found, check Spam or Promotions folder.";
+        })
+        .catch((error) => {
+          messageBox.innerText = error.message;
+        });
+    }
+
+    // Login
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          if (userCredential.user.emailVerified) {
+            showDashboard();
+          } else {
+            messageBox.innerText = "Please verify your email first.";
+          }
+        })
+        .catch((error) => {
+          messageBox.innerText = error.message;
+        });
+    }
+
+    // Logout
+    function logout() {
+      auth.signOut();
+    }
+
+    // Show dashboard
+    function showDashboard() {
+      authSection.style.display = "none";
+      dashboard.style.display = "block";
+    }
+
+    // Auto detect login state
+    auth.onAuthStateChanged((user) => {
+      if (user && user.emailVerified) {
+        showDashboard();
+      } else {
+        authSection.style.display = "block";
+        dashboard.style.display = "none";
+      }
+    });
+  </script>
+
+</body>
+</html>const auth = firebase.auth();
 
 function register() {
   const email = document.getElementById("email").value;
