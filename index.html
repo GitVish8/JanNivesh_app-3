@@ -43,7 +43,7 @@ function register() {
   auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       userCredential.user.sendEmailVerification();
-      alert("Verification email sent. Check your email.");
+      alert("Verification email sent!\n\nIf you don't see it in your Inbox, please check your Spam or Promotions folder.");
     })
     .catch((error) => {
       alert(error.message);
