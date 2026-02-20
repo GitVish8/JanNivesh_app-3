@@ -62,6 +62,8 @@
 
     <button onclick="register()">Register</button>
     <button onclick="login()">Login</button>
+    <br><br>
+    <button onclick="forgotPassword()">Forgot Password?</button>
 
     <p id="message"></p>
   </div>
@@ -124,6 +126,25 @@
         });
     }
 
+    // Forgot Password
+    function forgotPassword() {
+      const email = document.getElementById("email").value;
+
+      if (!email) {
+        messageBox.innerText = "Please enter your email first.";
+        return;
+      }
+
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          messageBox.innerText =
+            "Password reset email sent! Please check your Inbox or Spam folder.";
+        })
+        .catch((error) => {
+          messageBox.innerText = error.message;
+        });
+    }
+
     // Logout
     function logout() {
       auth.signOut();
@@ -147,54 +168,4 @@
   </script>
 
 </body>
-</html>const auth = firebase.auth();
-
-function register() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  auth.createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      userCredential.user.sendEmailVerification();
-      alert("Verification email sent!\n\nIf you don't see it in your Inbox, please check your Spam or Promotions folder.");
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-}
-
-function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      if (userCredential.user.emailVerified) {
-        alert("Login Successful");
-      } else {
-        alert("Please verify your email first.");
-      }
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-}
-
-</script>
-
-</<body>
-
-<h2>Jan Nivesh Email Login</h2>
-
-<input type="email" id="email" placeholder="Enter Email">
-<br><br>
-
-<input type="password" id="password" placeholder="Enter Password">
-<br><br>
-
-<button onclick="register()">Register</button>
-<button onclick="login()">Login</button>
-
-</body>
-  
 </html>
